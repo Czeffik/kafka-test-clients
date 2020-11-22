@@ -27,8 +27,8 @@ plugins {
     id 'info.solidsoft.pitest' version "$pitestVersion"
 }
 
-group 'com.czeffik'
-version '1.0-SNAPSHOT'
+group 'io.github.czeffik'
+version '0.0.1'
 
 repositories(repos)
 
