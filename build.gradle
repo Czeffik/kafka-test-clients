@@ -1,0 +1,59 @@
+buildscript {
+    ext {
+        repos = {
+            mavenLocal()
+            gradlePluginPortal()
+            mavenCentral()
+        }
+
+        kafkaClientsVersion = '2.6.0'
+        avroVersion = '1.10.0'
+        awaitilityVersion = '4.0.3'
+        lombokVersion = '1.18.16'
+
+
+        groovyVersion = '2.5.13'
+        spockVersion = '1.3-groovy-2.5'
+        byteBuddyVersion = '1.10.18'
+        objenesisVersion = '3.1'
+
+        pitestVersion = '1.4.6'
+    }
+}
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'idea'
+    id 'info.solidsoft.pitest' version "$pitestVersion"
+}
+
+group 'com.czeffik'
+version '1.0-SNAPSHOT'
+
+repositories(repos)
+
+dependencies {
+    compileOnly "org.apache.kafka:kafka-clients:${kafkaClientsVersion}"
+
+    compileOnly "org.apache.avro:avro:${avroVersion}"
+
+    compileOnly "org.awaitility:awaitility:${awaitilityVersion}"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testImplementation "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
+    testImplementation "net.bytebuddy:byte-buddy:${byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${objenesisVersion}"
+
+    configurations {
+        testCompile.extendsFrom compileOnly
+    }
+}
+
+pitest {
+    threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+}
