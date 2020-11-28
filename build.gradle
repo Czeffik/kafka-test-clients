@@ -31,7 +31,7 @@ plugins {
 }
 
 group 'io.github.czeffik'
-version '0.0.2-SNAPSHOT'
+version '0.0.2'
 
 repositories(repos)
 

@@ -3,6 +3,7 @@ package io.github.czeffik.kafka.test.clients.helper
 import io.github.czeffik.kafka.test.clients.consumer.KafkaTestConsumer
 import io.github.czeffik.kafka.test.clients.producer.KafkaTestProducer
 import io.github.czeffik.kafka.test.clients.message.KafkaMessage
+import org.apache.kafka.common.header.Headers
 import spock.lang.Specification
 
 import java.time.Duration
@@ -22,6 +23,10 @@ class KafkaTestHelperSpec extends Specification {
 
     def 'should send messages and wait to appear'() {
         given:
+            def topic = 'topic'
+            def partition = 1
+            def headers = Mock(Headers)
+        and:
             def messages = [
                     'ke1': 'value1',
                     'ke2': 'value2'
@@ -34,7 +39,7 @@ class KafkaTestHelperSpec extends Specification {
             _ * producer.send(_)
         and:
             1 * consumer.assignToPartitionsAndSeekToBeginning()
-            1 * consumer.consumeFromCurrentOffsetToTheEnd() >> messages.collect { new KafkaMessage<>(it.key, it.value) }
+            1 * consumer.consumeFromCurrentOffsetToTheEnd() >> messages.collect { new KafkaMessage<>(it.key, it.value, topic, partition, headers) }
             _ * consumer.consumeFromCurrentOffsetToTheEnd()
             _ * consumer.assignToPartitionsAndSeekToBeginning()
     }
