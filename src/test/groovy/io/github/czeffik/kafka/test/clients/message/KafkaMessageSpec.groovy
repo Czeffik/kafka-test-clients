@@ -1,6 +1,7 @@
 package io.github.czeffik.kafka.test.clients.message
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.header.Headers
 import spock.lang.Specification
 
 class KafkaMessageSpec extends Specification {
@@ -29,26 +30,34 @@ class KafkaMessageSpec extends Specification {
             kafkaMessage.getKey() == key
     }
 
-    def 'should have required args construcot'() {
+    def 'should have required args constructor'() {
         given:
             def key = 'SUPER KEY'
-        and:
             def value = 'GREAT VALUE'
+            def topic = 'topic'
+            def partition = 1
+            def headers = Mock(Headers)
         when:
-            def kafkaMessage = new KafkaMessage(key, value)
+            def kafkaMessage = new KafkaMessage(key, value, topic, partition, headers)
         then:
             kafkaMessage.getValue() == value
             kafkaMessage.getKey() == key
+            kafkaMessage.getTopic() == topic
+            kafkaMessage.getPartition() == partition
+            kafkaMessage.getHeaders() == headers
     }
 
-    def 'messages with same values should be equals and has same hash code'(){
+    def 'messages with same values should be equals and has same hash code'() {
         given:
             def key = 'KEY'
             def value = 'VALUE'
+            def topic = 'topic'
+            def partition = 1
+            def headers = Mock(Headers)
         and:
-            def message1 = new KafkaMessage(key, value)
+            def message1 = new KafkaMessage(key, value, topic, partition, headers)
         and:
-            def message2 = new KafkaMessage(key, value)
+            def message2 = new KafkaMessage(key, value, topic, partition, headers)
         expect:
             message1.hashCode() == message2.hashCode()
             message1 == message2
