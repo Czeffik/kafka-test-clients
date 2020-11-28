@@ -66,6 +66,22 @@ public abstract class KafkaTestHelper<V> implements AutoCloseable {
         return consumedMessages;
     }
 
+    public List<KafkaMessage<V>> consumeExpectedNumberOfMessagesFilteredByKeys(
+            final @NonNull List<String> expectedKeys,
+            final int expectedNumberOfMessagesWithKey
+    ) {
+        final List<KafkaMessage<V>> consumedMessages = new ArrayList<>();
+        this.kafkaTestConsumer.assignToPartitionsAndSeekToBeginning();
+        Awaitility.await().atMost(duration).untilAsserted(() -> {
+            consumedMessages.addAll(
+                    this.kafkaTestConsumer.consumeFromCurrentOffsetToTheEnd().stream()
+                            .filter(kafkaMessage -> expectedKeys.contains(kafkaMessage.getKey()))
+                            .collect(Collectors.toList())
+            );
+            assert (long) consumedMessages.size() == expectedNumberOfMessagesWithKey;
+        });
+        return consumedMessages;
+    }
 
     public void waitForMessages(final Map<String, V> expectedMessages) {
         final List<KafkaMessage<V>> consumedMessages = new ArrayList<>();
